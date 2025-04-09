@@ -48,9 +48,9 @@ conda activate mindfit
 ```bash
 python -m venv venv
 venv\Scripts\activate     # (Windows)
-(이 코드는 안쳐도됨)
 
 pip install -r requirements.txt
+#가상환경을 구성하지 않고 작업하려면 pip install -r requirements.txt 이것만 실행
 ```
 
 ---
