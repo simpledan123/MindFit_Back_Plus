@@ -9,13 +9,13 @@ from models.keyword import Keyword, menu_keywords
 from sqlalchemy.orm import Session
 
 # 구글 맵 API 설정
-API_KEY = '당신의 key 를 입력하세요'
+API_KEY = '여기에 당신의 키를 입력하세용'
 NEARBY_SEARCH_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
 DETAILS_URL = "https://maps.googleapis.com/maps/api/place/details/json"
 
 # 경기대학교 위치
 LOCATION = "37.2390,127.0100"
-RADIUS = 300 #300미터 반경
+RADIUS = 1500 #1500미터 반경
 
 def clean_whitespace(text):
     if text:
@@ -113,6 +113,7 @@ def main():
 
     db.close()
     print("✅ 크롤링 및 DB 저장 완료되었습니다.")
+    print(f"크롤링된 식당 수: {len(restaurants)}")
 
 if __name__ == "__main__":
     main()

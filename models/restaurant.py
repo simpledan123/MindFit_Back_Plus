@@ -10,5 +10,7 @@ class Restaurant(Base):
     rating = Column(Float, nullable=False, default=0.0)
     address = Column(String, nullable=False)
     phone = Column(String(20))
+    opening_hours = Column(String)
     latitude = Column(DECIMAL(10, 7), nullable=False)
     longitude = Column(DECIMAL(10, 7), nullable=False)
+    place_id = Column(String, unique=True) 
