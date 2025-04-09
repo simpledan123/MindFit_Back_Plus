@@ -72,7 +72,7 @@ OPENAI_API_KEY=여기에 당신의 키를 입력하세용
 
 ---
 
-## API Key 추가
+## 📚 API Key 추가
 .env  
 data_crawling.py  
 chat_chain_v2.py
@@ -111,7 +111,7 @@ python crawling/data_crawling.py
 
 ---
 
-## 챗봇 기능 실행
+## 🧠 챗봇 기능 실행
 
 ```
 python chat_chain_v2.py
@@ -131,4 +131,5 @@ python chat_chain_v2.py
 
 - `.env` 파일을 반드시 세팅해야 서버가 정상 작동합니다.
 - Google Places API 키가 필요합니다.
+- OpenAI API 키가 필요합니다.
 
