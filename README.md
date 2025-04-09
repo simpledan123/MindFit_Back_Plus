@@ -73,8 +73,8 @@ OPENAI_API_KEY=여기에 당신의 키를 입력하세용
 ---
 
 ## API Key 추가
-.env
-data_crawling.py
+.env  
+data_crawling.py  
 chat_chain_v2.py
 
 이 3개의 파일에 API 키를 적어주세요. 구글 API와 OpeanAI API를 사용합니다.
