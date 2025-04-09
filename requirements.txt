@@ -1,0 +1,30 @@
+alembic @ file:///C:/Users/dev-admin/buildout/croot/alembic_1735845823467/work
+annotated-types @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/annotated-types_1729043709318/work
+anyio @ file:///C:/Users/dev-admin/buildout/perseverance-python-buildout/croot/anyio_1731701208416/work
+bcrypt @ file:///C:/b/abs_6bh_hni56u/croot/bcrypt_1736182479846/work
+cffi @ file:///C:/b/abs_29_b57if3f/croot/cffi_1736184144340/work
+click @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/click_1729040674118/work
+colorama @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/colorama_1729036581634/work
+cryptography @ file:///C:/b/abs_ae5lrkywtg/croot/cryptography_1740577842775/work
+dnspython @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/dnspython_1729059209941/work
+email_validator @ file:///home/conda/feedstock_root/build_artifacts/email-validator-meta_1733300719943/work
+fastapi @ file:///C:/Users/dev-admin/buildout/croot/fastapi_1735852737589/work
+greenlet @ file:///C:/b/abs_bbl_18a2tm/croot/greenlet_1733860081977/work
+h11 @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/h11_1729040746371/work
+idna @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/idna_1729038997316/work
+Mako @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/mako_1729048828184/work
+MarkupSafe @ file:///C:/b/abs_a0ma7ge0jc/croot/markupsafe_1738584052792/work
+pycparser @ file:///tmp/build/80754af9/pycparser_1636541352034/work
+pydantic @ file:///C:/b/abs_27dx58x550/croot/pydantic_1734736090499/work
+pydantic_core @ file:///C:/b/abs_bdosz7qwys/croot/pydantic-core_1734726071532/work
+PyJWT @ file:///C:/Users/dev-admin/buildout/croot/pyjwt_1739559988030/work
+python-dotenv @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/python-dotenv_1729051615609/work
+python-multipart @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/python-multipart_1729063029629/work
+setuptools==75.8.0
+six @ file:///tmp/build/80754af9/six_1644875935023/work
+sniffio @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/sniffio_1729040228331/work
+SQLAlchemy @ file:///C:/b/abs_1au3ykwdxx/croot/sqlalchemy_1736565056929/work
+starlette @ file:///C:/Users/dev-admin/buildout/perseverance-python-buildout/croot/starlette-recipe_1731715343652/work
+typing_extensions @ file:///C:/b/abs_0ffjxtihug/croot/typing_extensions_1734714875646/work
+uvicorn @ file:///C:/b/abs_0a5pprsdq4/croot/uvicorn-split_1732662019530/work
+wheel==0.45.1
