@@ -14,7 +14,7 @@ load_dotenv()
 # OpenAI API 키 설정
 openai_api_key = os.getenv("여기에 당신의 키를 입력하세용")
 
-# 1. DB에서 식당 데이터 불러오기
+# 1. DB에서 식당 데이터 불러오기 + 후문/정문 데이터 추가
 def load_restaurant_data(db_path):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -27,6 +27,13 @@ def load_restaurant_data(db_path):
         name, phone, opening_hours, rating = row
         text = f"식당 이름: {name}\n전화번호: {phone}\n영업시간: {opening_hours}\n평점: {rating}"
         documents.append(Document(page_content=text))
+
+    # 추가: 후문/정문 정보
+    extra_text = (
+        "정문 위치: 위도 37.301778, 경도 127.034235\n"
+        "후문 위치: 위도 37.297540, 경도 127.041462\n"
+    )
+    documents.append(Document(page_content=extra_text))
 
     conn.close()
     return documents
@@ -52,7 +59,7 @@ def create_qa_chain(vectorstore):
 def main():
     # DB 파일 경로
     db_path = "./prac.db"
-    
+
     print("DB에서 식당 정보 불러오는 중...")
     documents = load_restaurant_data(db_path)
 
@@ -73,7 +80,12 @@ def main():
             print("챗봇을 종료합니다.")
             break
         result = qa_chain.run(query)
-        print("\n답변:", result)
+
+        # fallback 처리 추가
+        if not result or len(result.strip()) < 5:
+            print("\n답변: 죄송합니다. 질문을 이해하지 못했습니다. 다시 질문해 주세요.")
+        else:
+            print("\n답변:", result)
 
 if __name__ == "__main__":
     main()
