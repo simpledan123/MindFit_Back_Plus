@@ -1,21 +1,27 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import requests
+from dotenv import load_dotenv
 from db.database import SessionLocal
 from models.restaurant import Restaurant
 from models.menu import Menu
 from models.keyword import Keyword, menu_keywords
 from sqlalchemy.orm import Session
 
+# .env 파일 로드
+load_dotenv()
+
 # 구글 맵 API 설정
-API_KEY = '여기에 당신의 키를 입력하세용'
+API_KEY = os.getenv('GOOGLE_API_KEY')
 NEARBY_SEARCH_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
 DETAILS_URL = "https://maps.googleapis.com/maps/api/place/details/json"
 
+
 # 경기대학교 위치
 LOCATION = "37.2390,127.0100"
-RADIUS = 1500 #1500미터 반경
+RADIUS = 1500  # 1.5km 반경
 
 def clean_whitespace(text):
     if text:
@@ -41,7 +47,7 @@ def get_place_details(place_id):
     params = {
         'key': API_KEY,
         'place_id': place_id,
-        'fields': 'name,formatted_phone_number,opening_hours,rating'
+        'fields': 'name,formatted_phone_number,opening_hours,rating,geometry'
     }
     response = requests.get(DETAILS_URL, params=params)
     if response.status_code == 200:
@@ -51,13 +57,14 @@ def get_place_details(place_id):
         return {}
 
 def save_to_db(db: Session, restaurant_data):
+    # 식당 데이터 저장
     db_restaurant = Restaurant(
         name=restaurant_data['name'],
         phone=restaurant_data['phone'],
         rating=restaurant_data['rating'],
-        address="경기대학교 근처",
-        latitude=37.2390,
-        longitude=127.0100,
+        address=restaurant_data['address'],
+        latitude=restaurant_data['latitude'],
+        longitude=restaurant_data['longitude'],
         place_id=restaurant_data['place_id'],
         opening_hours=restaurant_data['opening_hours']
     )
@@ -93,7 +100,25 @@ def main():
 
     for restaurant in restaurants:
         place_id = restaurant.get('place_id')
+
+        # place_id 중복 체크
+        exists = db.query(Restaurant).filter(Restaurant.place_id == place_id).first()
+        if exists:
+            print(f"⚡ 이미 저장된 place_id: {place_id}, 스킵합니다.")
+            continue
+
         details = get_place_details(place_id)
+
+        if not details:
+            continue
+
+        location_info = details.get('geometry', {}).get('location', {})
+        latitude = location_info.get('lat')
+        longitude = location_info.get('lng')
+
+        if not (latitude and longitude):
+            print(f"⚠️ 위도/경도 정보 없음: {place_id}, 스킵합니다.")
+            continue
 
         opening_hours = ''
         if details.get('opening_hours'):
@@ -106,6 +131,9 @@ def main():
             'name': details.get('name') or restaurant.get('name'),
             'rating': details.get('rating') or restaurant.get('rating'),
             'phone': details.get('formatted_phone_number', ''),
+            'address': restaurant.get('vicinity', '주소 정보 없음'),
+            'latitude': latitude,
+            'longitude': longitude,
             'opening_hours': opening_hours
         }
 
