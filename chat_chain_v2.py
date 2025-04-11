@@ -12,80 +12,72 @@ from langchain.chains import RetrievalQA
 load_dotenv()
 
 # OpenAI API 키 설정
-openai_api_key = os.getenv("여기에 당신의 키를 입력하세용")
+openai_api_key = os.getenv("OPENAI_API_KEY")
 
-# 1. DB에서 식당 데이터 불러오기 + 후문/정문 데이터 추가
-def load_restaurant_data(db_path):
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
+# 데이터베이스 연결
+conn = sqlite3.connect("prac.db")
+cursor = conn.cursor()
 
-    cursor.execute("SELECT name, phone, opening_hours, rating FROM restaurants")
-    rows = cursor.fetchall()
+# 📌 id, name, latitude, longitude, rating까지 가져오기
+cursor.execute("SELECT id, name, latitude, longitude, rating, address, phone FROM restaurants")
+rows = cursor.fetchall()
 
-    documents = []
-    for row in rows:
-        name, phone, opening_hours, rating = row
-        text = f"식당 이름: {name}\n전화번호: {phone}\n영업시간: {opening_hours}\n평점: {rating}"
-        documents.append(Document(page_content=text))
-
-    # 추가: 후문/정문 정보
-    extra_text = (
-        "정문 위치: 위도 37.301778, 경도 127.034235\n"
-        "후문 위치: 위도 37.297540, 경도 127.041462\n"
+# 문서 생성
+documents = []
+for row in rows:
+    id_, name, lat, lng, rating, address, phone = row
+    content = f"식당명: {name}\n주소: {address}\n전화번호: {phone}"
+    documents.append(
+        Document(
+            page_content=content,
+            metadata={
+                "id": id_,
+                "latitude": lat,
+                "longitude": lng,
+                "rating": rating
+            }
+        )
     )
-    documents.append(Document(page_content=extra_text))
 
-    conn.close()
-    return documents
+# 문서 분할
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+docs = text_splitter.split_documents(documents)
 
-# 2. 텍스트 분할
-def split_documents(documents):
-    splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-    return splitter.split_documents(documents)
+# 벡터 스토어 생성
+embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
+db = FAISS.from_documents(docs, embeddings)
 
-# 3. 벡터스토어 만들기
-def create_vectorstore(documents):
-    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
-    vectorstore = FAISS.from_documents(documents, embeddings)
-    return vectorstore
+# 📌 RetrievalQA 체인 설정 (source_documents 반환)
+llm = ChatOpenAI(openai_api_key=openai_api_key, model_name="gpt-3.5-turbo", temperature=0)
+qa_chain = RetrievalQA.from_chain_type(
+    llm,
+    retriever=db.as_retriever(),
+    return_source_documents=True  # ★ 요거 추가해서 source 가져오기
+)
 
-# 4. 챗봇 QA 체인 만들기
-def create_qa_chain(vectorstore):
-    llm = ChatOpenAI(openai_api_key=openai_api_key, model_name="gpt-3.5-turbo")
-    retriever = vectorstore.as_retriever()
-    qa_chain = RetrievalQA.from_chain_type(llm, retriever=retriever)
-    return qa_chain
+# 대화 루프
+while True:
+    query = input("질문을 입력하세요 (종료하려면 '종료' 입력): ")
+    if query.lower() == "종료":
+        break
 
-def main():
-    # DB 파일 경로
-    db_path = "./prac.db"
+    # run이 아니라 __call__ 사용
+    result = qa_chain({"query": query})
 
-    print("DB에서 식당 정보 불러오는 중...")
-    documents = load_restaurant_data(db_path)
+    # 답변 출력
+    print("\n=== 답변 ===")
+    print(result["result"])  # 자연스러운 답변 문장
 
-    print("텍스트 분할 중...")
-    split_docs = split_documents(documents)
+    # 추천에 사용된 실제 문서 메타데이터 출력
+    source_docs = result["source_documents"]
 
-    print("벡터스토어 생성 중...")
-    vectorstore = create_vectorstore(split_docs)
-
-    print("챗봇 준비 완료!")
-
-    qa_chain = create_qa_chain(vectorstore)
-
-    # 챗봇 루프
-    while True:
-        query = input("\n질문을 입력하세요 (종료하려면 'exit' 입력): ")
-        if query.lower() == "exit":
-            print("챗봇을 종료합니다.")
-            break
-        result = qa_chain.run(query)
-
-        # fallback 처리 추가
-        if not result or len(result.strip()) < 5:
-            print("\n답변: 죄송합니다. 질문을 이해하지 못했습니다. 다시 질문해 주세요.")
-        else:
-            print("\n답변:", result)
-
-if __name__ == "__main__":
-    main()
+    if source_docs:
+        top_doc = source_docs[0]  # 가장 연관 높은 식당 하나
+        print("\n=== 추가 정보 (MetaData) ===")
+        print(f"식당 ID: {top_doc.metadata['id']}")
+        print(f"위도 (Latitude): {top_doc.metadata['latitude']}")
+        print(f"경도 (Longitude): {top_doc.metadata['longitude']}")
+        print(f"평점 (Rating): {top_doc.metadata['rating']}")
+        print("========================\n")
+    else:
+        print("추가 정보를 찾을 수 없습니다.\n")
