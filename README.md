@@ -74,11 +74,7 @@ GOOGLE_MAPS_API_KEY=키입력
 ---
 
 ## 📚 API Key 추가
-.env  
-data_crawling.py  
-chat_chain_v2.py
-
-이 3개의 파일에 API 키를 적어주세요. 구글 API와 OpeanAI API를 사용합니다.
+.env  에만 KEY를 추가해주세요
 
 ---
 
