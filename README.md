@@ -101,7 +101,7 @@ uvicorn main:app --reload
 ## 🌐 크롤링 스크립트 실행
 
 ```bash
-python crawling/data_crawling.py
+python -m crawling.data_crawling
 ```
 
 - 주변 식당 데이터를 크롤링하고 데이터베이스에 저장합니다.
