@@ -110,9 +110,9 @@ python -m crawling.data_crawling
 
 ## 🧠 챗봇 기능 실행
 
-```
-python chat_chain_v2.py
-```
+챗봇은 서버를 켜면 자동으로 같이 켜집니다!
+현재는 백엔드에서 동작합니다.
+Swagger UI에서 default/chat 들어가서, Try it out 누르고 {"message": "경기대 근처 맛집 추천해줘"} 이런식으로 작동
 
 - 크롤링된 데이터를 기반으로 챗봇이 작동합니다.
 
