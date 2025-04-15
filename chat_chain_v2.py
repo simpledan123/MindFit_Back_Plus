@@ -8,21 +8,14 @@ from langchain.vectorstores import FAISS
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import RetrievalQA
 
-# 환경변수 로드
 load_dotenv()
-
-# OpenAI API 키 설정
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
-# 데이터베이스 연결
 conn = sqlite3.connect("prac.db")
 cursor = conn.cursor()
-
-# 📌 id, name, latitude, longitude, rating까지 가져오기
 cursor.execute("SELECT id, name, latitude, longitude, rating, address, phone FROM restaurants")
 rows = cursor.fetchall()
 
-# 문서 생성
 documents = []
 for row in rows:
     id_, name, lat, lng, rating, address, phone = row
@@ -39,45 +32,41 @@ for row in rows:
         )
     )
 
-# 문서 분할
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
 docs = text_splitter.split_documents(documents)
 
-# 벡터 스토어 생성
-embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
-db = FAISS.from_documents(docs, embeddings)
+# LangChain 안전하게 초기화
+try:
+    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
+    db = FAISS.from_documents(docs, embeddings)
 
-# 📌 RetrievalQA 체인 설정 (source_documents 반환)
-llm = ChatOpenAI(openai_api_key=openai_api_key, model_name="gpt-3.5-turbo", temperature=0)
-qa_chain = RetrievalQA.from_chain_type(
-    llm,
-    retriever=db.as_retriever(),
-    return_source_documents=True  # ★ 요거 추가해서 source 가져오기
-)
+    llm = ChatOpenAI(openai_api_key=openai_api_key, model_name="gpt-3.5-turbo", temperature=0)
+    qa_chain = RetrievalQA.from_chain_type(
+        llm,
+        retriever=db.as_retriever(),
+        return_source_documents=True
+    )
+    print("✅ LangChain 초기화 완료")
 
-# 대화 루프
-while True:
-    query = input("질문을 입력하세요 (종료하려면 '종료' 입력): ")
-    if query.lower() == "종료":
-        break
+except Exception as e:
+    print(f"❌ LangChain 초기화 실패: {e}")
+    qa_chain = None
 
-    # run이 아니라 __call__ 사용
+def generate_chat_response(query):
+    if qa_chain is None:
+        return {"answer": "❌ 챗봇 초기화 실패: 관리자에게 문의하세요.", "metadata": {}}
+    
     result = qa_chain({"query": query})
+    answer = result["result"]
+    metadata = {}
 
-    # 답변 출력
-    print("\n=== 답변 ===")
-    print(result["result"])  # 자연스러운 답변 문장
+    if result["source_documents"]:
+        top_doc = result["source_documents"][0]
+        metadata = {
+            "id": top_doc.metadata['id'],
+            "latitude": top_doc.metadata['latitude'],
+            "longitude": top_doc.metadata['longitude'],
+            "rating": top_doc.metadata['rating'],
+        }
 
-    # 추천에 사용된 실제 문서 메타데이터 출력
-    source_docs = result["source_documents"]
-
-    if source_docs:
-        top_doc = source_docs[0]  # 가장 연관 높은 식당 하나
-        print("\n=== 추가 정보 (MetaData) ===")
-        print(f"식당 ID: {top_doc.metadata['id']}")
-        print(f"위도 (Latitude): {top_doc.metadata['latitude']}")
-        print(f"경도 (Longitude): {top_doc.metadata['longitude']}")
-        print(f"평점 (Rating): {top_doc.metadata['rating']}")
-        print("========================\n")
-    else:
-        print("추가 정보를 찾을 수 없습니다.\n")
+    return {"answer": answer, "metadata": metadata}
