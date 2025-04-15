@@ -1,32 +1,28 @@
 from fastapi import FastAPI
-from fastapi.openapi.utils import get_openapi
+from fastapi.middleware.cors import CORSMiddleware
+from schemas.chat import ChatRequest
 from api.v1.routers import api_router
+
+from chat_chain_v2 import generate_chat_response
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(api_router, prefix="/api/v1")
 
-'''
-실행 전에, 최상위경로에 .env파일을 만들어야 함 (내용은 README 찹조)
-.env파일과 data_crawling.py 파일과 chat_chain_v2.py에 API 키 필요
-'''
+@app.post("/chat")
+async def chat_endpoint(request: ChatRequest):
+    user_message = request.message
 
-#설정 끝났으면 터미널에서 아래 명령어 차례대로 실행
+    if not user_message:
+        return {"error": "No message provided."}
 
-'''
-alembic revision --autogenerate -m
-마이그레이션 파일 생성
-alembic upgrade head
-db 업데이트
-'''
-
-'''
-python crawling/data_crawling.py
-데이터 크롤링 (아마 이미 되어있을것임)
-'''
-
-'''
-python chat_chain_v2.py
-챗봇 실행
-'''
+    response = generate_chat_response(user_message)
+    return response
