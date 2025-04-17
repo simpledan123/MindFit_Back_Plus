@@ -57,7 +57,9 @@ pip install -r requirements.txt
 
 ## ⚙️ 환경변수 (.env)
 
-먼저 프로젝트 루트에 `.env` 파일을 만들어야 합니다.
+먼저 프로젝트 루트에 `.env` 파일을 만들어야 합니다.  
+
+.env 에 KEY를 꼭 추가해주세요!  
 
 내용은 다음과 같이 적어주세요:
 
@@ -73,17 +75,27 @@ GOOGLE_MAPS_API_KEY=키입력
 
 ---
 
-## 📚 API Key 추가
-.env  에만 KEY를 추가해주세요
-
----
-
 ## 🗄️ 데이터베이스 초기 세팅
 
 ```bash
-alembic revision --autogenerate -m "Initial migration"
+alembic revision --autogenerate
 alembic upgrade head
 ```
+
+## 🌐 크롤링 스크립트 실행
+
+```bash
+python crawling/kakao_crawl_db.py
+```
+카카오맵으로 경기대 근처 맛집을 크롤링해서 저장합니다.
+
+```
+python data_crawling.py
+```
+
+- 카카오맵으로 크롤링할 수 없는 정보(위도, 경도 등)을 구글 API를 이용해서 크롤링한 후, 카카오 기반으로 크롤링해서 저장한 맛집 DB에 추가합니다.  
+
+- 경기대 주변 식당 데이터를 크롤링하고 데이터베이스에 저장합니다. 위에서부터 순서대로 실행시켜야 합니다!
 
 ---
 
@@ -98,16 +110,6 @@ uvicorn main:app --reload
 
 ---
 
-## 🌐 크롤링 스크립트 실행
-
-```bash
-python -m crawling.data_crawling
-```
-
-- 주변 식당 데이터를 크롤링하고 데이터베이스에 저장합니다.
-
----
-
 ## 🧠 챗봇 기능 실행
 
 챗봇은 서버를 켜면 자동으로 같이 켜집니다!  
@@ -115,6 +117,8 @@ python -m crawling.data_crawling
 Swagger UI에서 default/chat 들어가서, Try it out 누르고 {"message": "경기대 근처 맛집 추천해줘"} 이런식으로 작동  
 
 - 크롤링된 데이터를 기반으로 챗봇이 작동합니다.
+
+---
 
 ## 📚 주요 기능
 
