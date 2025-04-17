@@ -85,12 +85,12 @@ alembic upgrade head
 ## 🌐 크롤링 스크립트 실행
 
 ```bash
-python crawling/kakao_crawl_db.py
+python crawling/crawl_kakao_db.py
 ```
 카카오맵으로 경기대 근처 맛집을 크롤링해서 저장합니다.
 
 ```
-python data_crawling.py
+python crawling/data_crawling.py
 ```
 
 - 카카오맵으로 크롤링할 수 없는 정보(위도, 경도 등)을 구글 API를 이용해서 크롤링한 후, 카카오 기반으로 크롤링해서 저장한 맛집 DB에 추가합니다.  
