@@ -11,15 +11,22 @@ from langchain.chains import RetrievalQA
 load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
+# DB 연결 및 식당 정보 로딩
 conn = sqlite3.connect("prac.db")
 cursor = conn.cursor()
-cursor.execute("SELECT id, name, latitude, longitude, rating, address, phone FROM restaurants")
+cursor.execute("SELECT id, name, latitude, longitude, rating, kakao_rating, address, phone FROM restaurants")
 rows = cursor.fetchall()
 
+# Document 생성
 documents = []
 for row in rows:
-    id_, name, lat, lng, rating, address, phone = row
-    content = f"식당명: {name}\n주소: {address}\n전화번호: {phone}"
+    id_, name, lat, lng, rating, kakao_rating, address, phone = row
+    content = f"""식당명: {name}
+주소: {address}
+전화번호: {phone}
+카카오 평점: {kakao_rating}
+구글 평점: {rating}
+"""
     documents.append(
         Document(
             page_content=content,
@@ -27,15 +34,16 @@ for row in rows:
                 "id": id_,
                 "latitude": lat,
                 "longitude": lng,
-                "rating": rating
+                "rating": rating,
+                "kakao_rating": kakao_rating
             }
         )
     )
 
+# 텍스트 분할 및 벡터 DB 생성
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
 docs = text_splitter.split_documents(documents)
 
-# LangChain 안전하게 초기화
 try:
     embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
     db = FAISS.from_documents(docs, embeddings)
@@ -52,6 +60,7 @@ except Exception as e:
     print(f"❌ LangChain 초기화 실패: {e}")
     qa_chain = None
 
+# 챗봇 호출 함수
 def generate_chat_response(query):
     if qa_chain is None:
         return {"answer": "❌ 챗봇 초기화 실패: 관리자에게 문의하세요.", "metadata": {}}
@@ -67,6 +76,7 @@ def generate_chat_response(query):
             "latitude": top_doc.metadata['latitude'],
             "longitude": top_doc.metadata['longitude'],
             "rating": top_doc.metadata['rating'],
+            "kakao_rating": top_doc.metadata['kakao_rating']
         }
 
     return {"answer": answer, "metadata": metadata}
