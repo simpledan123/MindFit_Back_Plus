@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from api.v1.endpoints import restaurants, reviews, users, auth
+from api.v1.endpoints import chatbot
 
 api_router = APIRouter()
 api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
