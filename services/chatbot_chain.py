@@ -1,4 +1,3 @@
-
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationSummaryMemory
 from langchain.schema import SystemMessage, HumanMessage
@@ -24,7 +23,7 @@ llm = ChatOpenAI(openai_api_key=openai_api_key, model_name="gpt-3.5-turbo", temp
 memory = ConversationSummaryMemory(llm=llm, return_messages=True)
 embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
 
-# 식당 정보 벡터화 (초기화 시 1회)
+# 식당 정보 벡터화
 import sqlite3
 conn = sqlite3.connect("prac.db")
 cursor = conn.cursor()
@@ -71,6 +70,9 @@ def classify_intent(query: str, summary: str) -> str:
     return llm(messages).content.strip()
 
 def generate_chat_response(query: str, user: User, db: Session):
+    if qa_chain is None:
+        return {"answer": "❌ 챗봇 초기화 실패: 관리자에게 문의하세요."}
+
     summary_obj = get_user_summary(db, user.id)
     summary = summary_obj.summary if summary_obj else ""
     intent = classify_intent(query, summary)
