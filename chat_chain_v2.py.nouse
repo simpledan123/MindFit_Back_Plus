@@ -1,3 +1,4 @@
+'''
 import os
 import sqlite3
 from dotenv import load_dotenv
@@ -80,3 +81,7 @@ def generate_chat_response(query):
         }
 
     return {"answer": answer, "metadata": metadata}
+
+'''
+
+#더이상 사용하지 않는 파일
