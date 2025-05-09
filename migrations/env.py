@@ -1,5 +1,6 @@
-import importlib
-import pkgutil
+# MindFit_Back_Plus-main/migrations/env.py
+import importlib # 추가
+import pkgutil # 추가
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
@@ -8,7 +9,8 @@ from sqlalchemy import pool
 from alembic import context
 
 from core.config import settings
-from db.database import Base
+# Base를 models.__init__ 또는 db.database에서 가져오도록 수정
+from db.database import Base # 모든 모델이 이 Base를 사용하도록 일관성 유지
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -26,14 +28,11 @@ config.set_main_option(
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-def import_models(package_name):
-    package = importlib.import_module(package_name)
-    for _, module_name, _ in pkgutil.walk_packages(package.__path__, package.__name__ + "."):
-        importlib.import_module(module_name)
-        
-import_models("models")
+# models 패키지 내의 __init__.py에서 모든 모델을 import 하도록 구성했다면,
+# 다음과 같이 간단하게 models 패키지만 import 해도 됩니다.
+import models # models 패키지 전체를 import (models/__init__.py 필요)
 
-target_metadata = Base.metadata
+target_metadata = Base.metadata # db.database.Base의 메타데이터 사용
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
