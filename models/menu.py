@@ -1,3 +1,4 @@
+# MindFit_Back_Plus-main/models/menu.py
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from db.database import Base
@@ -10,4 +11,4 @@ class Menu(Base):
     menu_item = Column(String, nullable=False)
     price = Column(String)
 
-    restaurant = relationship("Restaurant", backref="menus")
+    restaurant = relationship("Restaurant", back_populates="menus")
