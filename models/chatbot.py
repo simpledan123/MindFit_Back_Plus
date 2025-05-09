@@ -1,3 +1,4 @@
+# MindFit_Back_Plus-main/models/chatbot.py
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from db.database import Base
