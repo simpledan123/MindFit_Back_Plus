@@ -27,4 +27,9 @@ SQLAlchemy @ file:///C:/b/abs_1au3ykwdxx/croot/sqlalchemy_1736565056929/work
 starlette @ file:///C:/Users/dev-admin/buildout/perseverance-python-buildout/croot/starlette-recipe_1731715343652/work
 typing_extensions @ file:///C:/b/abs_0ffjxtihug/croot/typing_extensions_1734714875646/work
 uvicorn @ file:///C:/b/abs_0a5pprsdq4/croot/uvicorn-split_1732662019530/work
+langgraph>=0.0.40
+langchain>=0.1.0
+langchain-openai>=0.0.5
+langchain-community>=0.0.20
+faiss-cpu>=1.7.4
 wheel==0.45.1
