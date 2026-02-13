@@ -112,13 +112,15 @@ bash scripts/mysql/backup.sh
 bash scripts/mysql/restore.sh backups/mysql/<파일명>.sql  
 
 ### PR-A 테스트 순서
-# 1) MySQL 올리기
+```
+### 1) MySQL 올리기
 docker compose -f docker-compose.mysql.yml up -d
 
-# 2) 로컬 .env에 MySQL DATABASE_URL로 설정
+### 2) 로컬 .env에 MySQL DATABASE_URL로 설정
 
-# 3) 마이그레이션
+### 3) 마이그레이션
 alembic upgrade head
 
-# 4) 서버 실행
+### 4) 서버 실행
 uvicorn main:app --reload
+```
