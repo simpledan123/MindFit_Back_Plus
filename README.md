@@ -1,6 +1,6 @@
 
 
-### 2. 가상환경 세팅
+### 가상환경 세팅
 
 - **conda 사용 시**
 
@@ -102,18 +102,16 @@ Swagger UI에서 default/chat 들어가서, Try it out 누르고 {"message": "�
 
 ## 🐬 MySQL로 실행하기
 
-### 1) MySQL 컨테이너 실행
-```bash
+### MySQL 컨테이너 실행  
 docker compose -f docker-compose.mysql.yml up -d
 
 DATABASE_URL=mysql+pymysql://mindfit_app:mindfit_pass@localhost:3306/mindfit_db?charset=utf8mb4  
 
-백업/복구  
+### 백업/복구  
 bash scripts/mysql/backup.sh
 bash scripts/mysql/restore.sh backups/mysql/<파일명>.sql  
 
-## PR-A 테스트 순서
-```bash
+### PR-A 테스트 순서
 # 1) MySQL 올리기
 docker compose -f docker-compose.mysql.yml up -d
 
