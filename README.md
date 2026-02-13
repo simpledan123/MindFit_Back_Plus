@@ -1,31 +1,100 @@
+# 📌 Tech Stack
 
+## Backend
 
-### 가상환경 세팅
+-   FastAPI
+-   SQLAlchemy
+-   Alembic
+-   JWT Authentication
 
-- **conda 사용 시**
+## Database
 
-```bash
-conda env create -f environment.yml
-conda activate mindfit
+-   MySQL 8.4
+-   InnoDB Engine
+-   UTF8MB4 Character Set
+-   Docker 기반 컨테이너 운영
+
+## Schema Design & Modeling
+
+-   관계형 모델 기반 테이블 설계
+-   Primary Key / Foreign Key 명시
+-   InnoDB 기반 트랜잭션 보장
+-   서비스 특성 기반 인덱스 설계
+
+-   모델 구조는 `models/` 디렉토리에서 확인 가능합니다.
+
+## 계정 및 권한 관리 (Security)
+
+최소 권한 원칙(Principle of Least Privilege)을 적용하여 계정을
+분리하였습니다.
+
+  계정명        권한                             목적
+  ------------- -------------------------------- --------------------
+  mindfit_app   SELECT, INSERT, UPDATE, DELETE   애플리케이션 전용
+  mindfit_ro    SELECT                           읽기 전용 모니터링
+
+``` sql
+CREATE USER 'mindfit_ro'@'%' IDENTIFIED BY 'password';
+GRANT SELECT ON mindfit_db.* TO 'mindfit_ro'@'%';
+FLUSH PRIVILEGES;
 ```
 
-- **venv 사용 시**
+## 성능 모니터링 및 최적화
 
-```bash
-python -m venv venv
-venv\Scripts\activate     # (Windows)
+운영 환경을 가정하여 성능 모니터링 기능을 구성하였습니다.
 
-pip install -r requirements.txt
-#가상환경을 구성하지 않고 작업하려면 pip install -r requirements.txt 이것만 실행
+### Slow Query Log 활성화
+
+-   slow_query_log = 1
+-   long_query_time = 1
+
+``` sql
+SHOW VARIABLES LIKE 'slow_query_log';
+SHOW VARIABLES LIKE 'long_query_time';
 ```
 
----
+### 세션 및 상태 점검
+
+``` sql
+SHOW PROCESSLIST;
+SHOW ENGINE INNODB STATUS;
+```
+## 백업 및 복구 전략
+
+MySQL `mysqldump` 기반 논리 백업을 자동화하였습니다.
+
+### ✔ 백업
+
+``` bash
+bash scripts/mysql/backup.sh
+```
+
+### ✔ 복구
+
+``` bash
+bash scripts/mysql/restore.sh backups/mysql/<backup_file>.sql
+```
+
+적용 옵션: - --single-transaction - 루틴 및 이벤트 포함 - 백업/복구
+테스트 완료
+
+## Connection Pool 설정
+
+운영 환경을 고려하여 SQLAlchemy Connection Pool 옵션을 적용하였습니다.
+
+-   pool_pre_ping=True
+-   pool_size
+-   max_overflow
+-   pool_recycle
+
+장기 실행 환경에서 커넥션 안정성을 확보하기 위한 설정입니다.
+
+
+---  
 
 ## ⚙️ 환경변수 (.env)
 
-먼저 프로젝트 루트에 `.env` 파일을 만들어야 합니다.  
-
-.env 에 KEY를 꼭 추가해주세요!  
+.env 에 KEY를 꼭 추가해주세요
 
 내용은 다음과 같이 적어주세요:
 
@@ -90,8 +159,6 @@ Swagger UI에서 default/chat 들어가서, Try it out 누르고 {"message": "�
 
 - Google Places API를 이용한 식당 정보 크롤링
 - FastAPI 서버를 통한 데이터 조회 및 관리
-- SQLite 데이터베이스 연동
-
 ---
 
 ## 📢 주의사항
@@ -104,23 +171,3 @@ Swagger UI에서 default/chat 들어가서, Try it out 누르고 {"message": "�
 
 ### MySQL 컨테이너 실행  
 docker compose -f docker-compose.mysql.yml up -d
-
-DATABASE_URL=mysql+pymysql://mindfit_app:mindfit_pass@localhost:3306/mindfit_db?charset=utf8mb4  
-
-### 백업/복구  
-bash scripts/mysql/backup.sh
-bash scripts/mysql/restore.sh backups/mysql/<파일명>.sql  
-
-### PR-A 테스트 순서
-```
-### 1) MySQL 올리기
-docker compose -f docker-compose.mysql.yml up -d
-
-### 2) 로컬 .env에 MySQL DATABASE_URL로 설정
-
-### 3) 마이그레이션
-alembic upgrade head
-
-### 4) 서버 실행
-uvicorn main:app --reload
-```
