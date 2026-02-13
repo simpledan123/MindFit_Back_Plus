@@ -1,38 +1,4 @@
-# MindFit_Backend_plus 🧠
 
-FastAPI + Crawling + Database Integration Project
-
----
-
-## 📦 프로젝트 소개
-
-MindFit_plus는 FastAPI 서버와 웹 크롤링 기능을 통합한 프로젝트입니다.  
-크롤링한 식당 데이터를 데이터베이스에 저장하고, API를 통해 조회할 수 있습니다.
-그리고 그 데이터를 이용해 간단한 챗봇을 사용할 수 있습니다.
-
-본 프로젝트는 다음 두 레포지토리를 기반으로 병합하여 개발되었습니다.
-
-- API 서버 구축: [minemine0961/MindFit_back](https://github.com/minemine0961/MindFit_back)
-- 웹 크롤링: [leekiin/MindFit](https://github.com/leekiin/MindFit)
-
-MindFit_plus는 minemine0961의 FastAPI 기반 API 서버를 중심으로, leekiin의 웹 크롤링 기능을 통합하여 하나의 백엔드 프로젝트로 재구성되었습니다.
-
-또한 여기에 simpledan123이 챗봇 기능을 추가했습니다.
-
-데이터 크롤링->db에 저장->해당 db를 베이스로 챗봇 작동
-
----
-
-## 🛠️ 설치 방법
-
-### 1. 클론
-
-```bash
-git clone https://github.com/yourname/MindFit_plus.git
-cd MindFit_plus
-```
-
-또는 Download Zip 해서 코드 다운받아도 됨
 
 ### 2. 가상환경 세팅
 
@@ -134,3 +100,27 @@ Swagger UI에서 default/chat 들어가서, Try it out 누르고 {"message": "�
 - Google Places API 키가 필요합니다.
 - OpenAI API 키가 필요합니다.
 
+## 🐬 MySQL로 실행하기
+
+### 1) MySQL 컨테이너 실행
+```bash
+docker compose -f docker-compose.mysql.yml up -d
+
+DATABASE_URL=mysql+pymysql://mindfit_app:mindfit_pass@localhost:3306/mindfit_db?charset=utf8mb4  
+
+백업/복구  
+bash scripts/mysql/backup.sh
+bash scripts/mysql/restore.sh backups/mysql/<파일명>.sql  
+
+## PR-A 테스트 순서
+```bash
+# 1) MySQL 올리기
+docker compose -f docker-compose.mysql.yml up -d
+
+# 2) 로컬 .env에 MySQL DATABASE_URL로 설정
+
+# 3) 마이그레이션
+alembic upgrade head
+
+# 4) 서버 실행
+uvicorn main:app --reload
