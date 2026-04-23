@@ -1,0 +1,61 @@
+services:
+
+  # ── MySQL ──────────────────────────────
+  mysql:
+    image: mysql:8.4
+    container_name: mindfit-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mindfit_db
+      MYSQL_USER: mindfit_app
+      MYSQL_PASSWORD: mindfit_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./infra/mysql/init:/docker-entrypoint-initdb.d
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --slow_query_log=1
+      --long_query_time=1
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "mindfit_app", "-pmindfit_pass"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── FastAPI 백엔드 ──────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: mindfit-backend
+    env_file: .env
+    environment:
+      DATABASE_URL: mysql+pymysql://mindfit_app:mindfit_pass@mysql:3306/mindfit_db?charset=utf8mb4
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app                 # 개발 중 코드 변경 반영
+      - ./backups:/app/backups
+    depends_on:
+      mysql:
+        condition: service_healthy
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  # ── React 프론트엔드 ────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY}
+    container_name: mindfit-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:

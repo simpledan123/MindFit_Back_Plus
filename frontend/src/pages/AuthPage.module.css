@@ -1,0 +1,105 @@
+.wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-base);
+  background-image: radial-gradient(ellipse 80% 60% at 50% 0%, #FF6B3510 0%, transparent 70%);
+}
+
+.card {
+  width: 100%;
+  max-width: 400px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 48px 40px;
+  box-shadow: var(--shadow);
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  color: var(--accent);
+  text-align: center;
+  letter-spacing: -0.02em;
+}
+
+.sub {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin-top: 4px;
+  margin-bottom: 36px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-top: 8px;
+  display: block;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  border-color: var(--accent);
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+.error {
+  font-size: 0.82rem;
+  color: #FF4D4D;
+  margin-top: 4px;
+}
+
+.btn {
+  margin-top: 20px;
+  width: 100%;
+  padding: 13px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  transition: opacity 0.2s, transform 0.1s;
+  letter-spacing: 0.02em;
+}
+
+.btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+.btn:active:not(:disabled) { transform: translateY(0); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.footer {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.link {
+  color: var(--accent);
+  font-weight: 500;
+}
+.link:hover { text-decoration: underline; }
