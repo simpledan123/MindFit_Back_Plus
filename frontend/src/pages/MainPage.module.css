@@ -1,10 +1,5 @@
-.layout {
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
-}
+.layout { display: flex; height: 100vh; overflow: hidden; }
 
-/* ── 사이드바 ── */
 .sidebar {
   width: 400px;
   flex-shrink: 0;
@@ -13,12 +8,10 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
-.sideTop {
-  padding: 20px 20px 0;
-  flex-shrink: 0;
-}
+.sideTop { padding: 20px 20px 0; flex-shrink: 0; }
 
 .logo {
   font-family: var(--font-display);
@@ -42,26 +35,17 @@
   font-size: 0.82rem;
   font-weight: 500;
   border-radius: 6px;
-  color: var(--text-secondary);
-  transition: background 0.15s, color 0.15s;
+  color: var(--text-muted);
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
 }
-
 .tabBtn.active {
   background: var(--bg-card);
   color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
 }
+.tabBtn:hover:not(.active) { color: var(--text-secondary); }
 
-.tabBtn:hover:not(.active) {
-  color: var(--text-primary);
-}
-
-.sideContent {
-  flex: 1;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  padding-top: 12px;
-}
+.sideContent { flex: 1; overflow: hidden; display: flex; flex-direction: column; padding-top: 12px; }
 
 .logoutBtn {
   flex-shrink: 0;
@@ -73,15 +57,6 @@
   border-radius: var(--radius-sm);
   transition: color 0.15s, border-color 0.15s;
 }
+.logoutBtn:hover { color: var(--text-secondary); border-color: var(--border-strong); }
 
-.logoutBtn:hover {
-  color: var(--text-secondary);
-  border-color: var(--text-muted);
-}
-
-/* ── 지도 영역 ── */
-.mapArea {
-  flex: 1;
-  overflow: hidden;
-  position: relative;
-}
+.mapArea { flex: 1; overflow: hidden; position: relative; }

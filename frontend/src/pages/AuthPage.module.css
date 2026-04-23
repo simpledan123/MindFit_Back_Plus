@@ -4,7 +4,6 @@
   align-items: center;
   justify-content: center;
   background: var(--bg-base);
-  background-image: radial-gradient(ellipse 80% 60% at 50% 0%, #FF6B3510 0%, transparent 70%);
 }
 
 .card {
@@ -59,18 +58,12 @@
   font-size: 0.95rem;
   transition: border-color 0.2s;
 }
-
-.input:focus {
-  border-color: var(--accent);
-}
-
-.input::placeholder {
-  color: var(--text-muted);
-}
+.input:focus { border-color: var(--accent); }
+.input::placeholder { color: var(--text-muted); }
 
 .error {
   font-size: 0.82rem;
-  color: #FF4D4D;
+  color: #E03030;
   margin-top: 4px;
 }
 
@@ -86,7 +79,6 @@
   transition: opacity 0.2s, transform 0.1s;
   letter-spacing: 0.02em;
 }
-
 .btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
 .btn:active:not(:disabled) { transform: translateY(0); }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -97,9 +89,5 @@
   font-size: 0.85rem;
   color: var(--text-secondary);
 }
-
-.link {
-  color: var(--accent);
-  font-weight: 500;
-}
+.link { color: var(--accent); font-weight: 500; }
 .link:hover { text-decoration: underline; }
